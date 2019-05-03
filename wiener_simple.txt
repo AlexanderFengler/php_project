@@ -1,0 +1,14 @@
+model {
+  # Priors
+  a ~ dunif(0, 10);
+  n_dt ~ dunif(0, min_rt);
+  w ~ dunif(0, 1);
+  v ~ dnorm(0, 0.01);
+  # Likelihood
+  for (n in 1:switch_idx){
+    rts[n] ~ dwiener(a, n_dt, 1 - w, -v);
+  }  
+  for (n in (switch_idx + 1):N){
+    rts[n] ~ dwiener(a, n_dt, w, v);
+  }
+}

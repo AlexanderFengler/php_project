@@ -1,0 +1,24 @@
+model {
+  # Hyper-Priors
+  mu_v ~ dnorm(0, 0.01)
+  prec_v ~ dgamma(10, 1)
+  shape_a ~ dgamma(1, 0.01)
+  rate_a ~ dgamma(1, 0.01)
+  w_u ~ dunif(0, 1)
+  w_v ~ dgamma(2, 0.01)
+  for (j in 1:J){
+    # Priors
+    # Note: parameters of the gamma for a up for discussion
+    a[j] ~ dgamma(shape_a, rate_a); 
+    # n_dt[j] ~ dunif(0, min_rt);
+    w[j] ~ dbeta(w_u * w_v, (1 - w_u) * w_v);
+    v[j] ~ dnorm(mu_v, prec_v);
+    # Likelihood
+    for (n in 1:switch_idx[j]){
+      rts[j,n] ~ dwiener(a[j], 0.000001, 1 - w[j], -v[j]);
+    }  
+    for (n in (switch_idx[j] + 1):N){
+      rts[j,n] ~ dwiener(a[j], 0.000001, w[j], v[j]);
+    }
+  }
+}

@@ -1,0 +1,16 @@
+model {
+  # Priors
+  for (j in 1:J){
+    a[j] ~ dunif(0, 10);
+    #n_dt[j] ~ dunif(0, min_rt);
+    w[j] ~ dunif(0, 1);
+    v[j] ~ dnorm(0, 0.01);
+    # Likelihood
+    for (n in 1:switch_idx[j]){
+      rts[j,n] ~ dwiener(a[j], 0.00001, 1 - w[j], -v[j]);
+    }  
+    for (n in (switch_idx[j] + 1):N){
+      rts[j,n] ~ dwiener(a[j], 0.00001, w[j], v[j]);
+    }
+  }
+}

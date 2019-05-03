@@ -1,0 +1,10 @@
+data {
+# My Gamma 
+for (i in 1:N){
+y[i] ~ dgamma(1, 0.01)
+}
+}
+
+model{
+fake <- 0
+}
